@@ -4,7 +4,7 @@
            <button @click="toProcess">调到指定进度</button>
            <input type="text" v-model="process">
        </div>
-        <circle-process :total="total1" :id="canvasId1">
+        <circle-process :total="total1" :id="canvasId1" :list="list">
             
         </circle-process>
 
@@ -14,7 +14,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import CircleProcess from '@component/CircleProcess.vue'
 export default defineComponent({
     name: "Show",
@@ -30,13 +30,24 @@ export default defineComponent({
         }
         const canvasId2 = ref('canvas2');
         const total2 = ref(99.9)
+        const list = reactive([
+            {
+                id: 1,
+                val: 1
+            },
+            {
+                id: 2,
+                val: 2
+            }
+        ])
         return { 
             canvasId1,
             total1,
             process,
             canvasId2,
             total2,
-            toProcess
+            toProcess,
+            list
         };
     },
 });

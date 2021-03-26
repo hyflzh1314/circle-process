@@ -2,7 +2,7 @@
 	<div class="circle-process-container" :id="canvasId"></div>
 </template>
 <script lang="ts">
-	import { ref, isRef, isReactive, toRefs, defineComponent, onMounted, watch, toRef } from "vue";
+	import { ref, toRef, toRefs, defineComponent, onMounted, watch} from "vue";
 
 	export default defineComponent({
 		name: "CircleProcess",
@@ -78,8 +78,8 @@
 			const fontColor = props.fontColor;
 			// 当前进度
 			var nowPercent: number = 0;
-			// 总进度 需要监听total的变化，所以通过torefs转成ref,不使用toRef是因为转换后会生成一个新的ref与props没有关系
-			var { total }  = toRefs(props);
+			// 总进度 需要监听total的变化，通过toref转成ref，保持响应性
+			var total = toRef(props, 'total');
 			// 动画
 			var animation: any;
 			//记录每次动画执行结束的时间
@@ -154,8 +154,7 @@
 				init();
 			});
 
-			watch(total, (val) => {
-				console.log(val);
+			watch(total, newTotal => {
 				drawFrame();
 			});
 

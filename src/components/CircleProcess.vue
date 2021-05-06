@@ -77,26 +77,41 @@
 			const fontSize = props.fontSize;
 			const fontColor = props.fontColor;
 			// 当前进度
-			var nowPercent: number = 0;
+			let nowPercent: number = 0;
 			// 总进度 需要监听total的变化，通过toref转成ref，保持响应性
-			var total = toRef(props, 'total');
+			let total = toRef(props, 'total');
 			// 动画
-			var animation: any;
+			let animation: any;
 			//记录每次动画执行结束的时间
-			var lastTime: number = 0;
+			let lastTime: number = 0;
+			// 设备dpr
+			let dpr: number = 1;
+			let canvasCtx: any;
 
-			var canvasCtx: any;
+			const getPixelRatio = (canvasCtx: any): number => {
+				let backingStore = canvasCtx.backingStorePixelRatio ||
+					canvasCtx.webkitBackingStorePixelRatio ||
+					canvasCtx.mozBackingStorePixelRatio ||
+					canvasCtx.msBackingStorePixelRatio ||
+					canvasCtx.oBackingStorePixelRatio ||
+					canvasCtx.backingStorePixelRatio || 1;
+				return (window.devicePixelRatio || 1) / backingStore;
+			}
 			const init = (): void => {
 				const container = document.querySelector(`#${canvasId}`);
 				const canvas = document.createElement("canvas");
-				canvas.width = canvasWidth;
-				canvas.height = canvasHeight;
 				canvasCtx = canvas.getContext("2d");
+				dpr = getPixelRatio(canvasCtx);
+				canvas.style.width = canvasWidth + 'px';
+    			canvas.style.height = canvasHeight + 'px';
+				canvas.width = canvasWidth * dpr;
+				canvas.height = canvasHeight * dpr;
 				drawFrame();
 				container && container.appendChild(canvas);
 			};
 			const drawOuterCircle = (): void => {
 				canvasCtx.save();
+				canvasCtx.scale(dpr, dpr);
 				canvasCtx.beginPath();
 				canvasCtx.strokeStyle = outerColor;
 				canvasCtx.lineWidth = circleLine;
@@ -108,6 +123,7 @@
 
 			const drawInnerCircle = (n: number): void => {
 				canvasCtx.save();
+				canvasCtx.scale(dpr, dpr);
 				canvasCtx.beginPath();
 				canvasCtx.strokeStyle = innerColor;
 				canvasCtx.lineWidth = circleLine;
@@ -125,6 +141,7 @@
 
 			const drawText = (n: number): void => {
 				canvasCtx.save();
+				canvasCtx.scale(dpr, dpr);
 				canvasCtx.fillStyle = fontColor;
 				canvasCtx.font = fontSize + " Arial";
 				canvasCtx.textAlign = "center";
